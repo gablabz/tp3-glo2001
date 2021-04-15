@@ -131,6 +131,58 @@ namespace TP3
 	int DisqueVirtuel::bd_rm(const std::string& p_Filename) {
 		return 0;
 	}
+	
+	std::vector<std::string> DisqueVirtuel::getPathDecompose(const std::string& pathname){
+		//Cette methode divise les parties du pathname selon les '/' et les insere dans un vecteur
+		//La methode retourne un vecteur vide si le path ne commence pas par / ou s'il y a un repertoire sans nom
+
+		std::vector<std::string> pathVector;
+		int index = pathname.find_first_of('/');
+		if (index != 0){
+			return pathVector;
+		}
+
+		std::string temp_string = pathname;
+
+		while (index != -1){
+			temp_string = temp_string.substr(index+1);
+			int temp_index = temp_string.find_first_of('/');
+			if (temp_index > 0)
+			{
+				pathVector.push_back(temp_string.substr(0, temp_index));
+			}
+			else if (temp_index == -1){
+				pathVector.push_back(temp_string);
+			}
+			else{
+				pathVector.clear();
+				return pathVector;
+			} 
+			index = temp_index;
+		}
+
+		return pathVector;
+	}
+
+	int DisqueVirtuel::verifPath(const std::vector<std::string>& pathVector){
+		//Cette methode retourne 1 si le path existe, 0 s'il n'existe pas
+		int iNodeNumber = ROOT_INODE;
+		int nextiNodeNumber = ROOT_INODE;
+		for (int i=0; i<pathVector.size(); i++){
+			std::string pathName = pathVector[i];
+			iNode *dirINode = m_blockDisque[iNodeNumber + BASE_BLOCK_INODE].m_inode;
+			Block blockDonnees = m_blockDisque[dirINode->st_block];
+			for (int j=0; j<blockDonnees.m_dirEntry.size(); j++){
+				if (pathName.compare(blockDonnees.m_dirEntry[j]->m_filename) == 0){
+					nextiNodeNumber = blockDonnees.m_dirEntry[j]->m_iNode;
+					break;
+				}
+			}
+			if (iNodeNumber == nextiNodeNumber) return 0;
+			iNodeNumber = nextiNodeNumber;
+		}
+		return 1;
+	}
 
 
 }//Fin du namespace
