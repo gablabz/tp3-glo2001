@@ -48,7 +48,7 @@ private:
 	void initINodes();
 	void initRoot();
 	std::vector<std::string> getPathDecompose(const std::string& pathname);
-	int verifPath(const std::vector<std::string>& pathVector);
+	int findINode(const std::vector<std::string>& pathVector);
 		
 };
 
