@@ -164,8 +164,8 @@ namespace TP3
 		return pathVector;
 	}
 
-	int DisqueVirtuel::verifPath(const std::vector<std::string>& pathVector){
-		//Cette methode retourne 1 si le path existe, 0 s'il n'existe pas
+	int DisqueVirtuel::findINode(const std::vector<std::string>& pathVector){
+		//Cette methode le numero de l'inode correspondant au path. Si le path est invalide, donc si le repertoire n'existe pas, on retourne -1
 		int iNodeNumber = ROOT_INODE;
 		int nextiNodeNumber = ROOT_INODE;
 		for (int i=0; i<pathVector.size(); i++){
@@ -178,10 +178,10 @@ namespace TP3
 					break;
 				}
 			}
-			if (iNodeNumber == nextiNodeNumber) return 0;
+			if (iNodeNumber == nextiNodeNumber) return -1;
 			iNodeNumber = nextiNodeNumber;
 		}
-		return 1;
+		return iNodeNumber;
 	}
 
 
