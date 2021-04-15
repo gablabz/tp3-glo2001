@@ -15,7 +15,7 @@
 namespace TP3
 {
 	// Ajouter votre code ici !
-}
+
 
 }//Fin du namespace
 
