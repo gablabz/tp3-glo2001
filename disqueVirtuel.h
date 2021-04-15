@@ -46,6 +46,7 @@ private:
 		void initBitmapEmptyBlocks();
 		void initBitmapEmptyINodes();
 		void initINodes();
+		void initRoot();
 		int findFirstEmptyINodesIndex(vector<bool> nodeVector);
 		int findLastEmptyINodesIndex(vector<bool> nodeVector);
 		
