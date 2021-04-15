@@ -132,6 +132,28 @@ namespace TP3
 		return 0;
 	}
 	
+	int DisqueVirtuel::findFirstEmptyINodesIndex(std::vector<bool> nodeVector) {
+		int index = 0;
+		for (bool node : nodeVector){
+			if(node == true){
+				return index;
+			}
+		index++;
+		}
+		//retourne -1 si aucun INode libre
+		return -1;
+	}
+
+	int DisqueVirtuel::findLastEmptyINodesIndex(std::vector<bool> nodeVector){
+		for (int i=nodeVector.size() - 1; i>= 0; i--){
+			if(nodeVector.at(i) == true){
+				return i;
+			}
+		}
+		//retourne -1 si aucun INode libre
+		return -1;
+	}
+	
 	std::vector<std::string> DisqueVirtuel::getPathDecompose(const std::string& pathname){
 		//Cette methode divise les parties du pathname selon les '/' et les insere dans un vecteur
 		//La methode retourne un vecteur vide si le path ne commence pas par / ou s'il y a un repertoire sans nom

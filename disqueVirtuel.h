@@ -47,6 +47,8 @@ private:
 	void initBitmapEmptyINodes();
 	void initINodes();
 	void initRoot();
+	int findFirstEmptyINodesIndex(std::vector<bool> nodeVector);
+	int findLastEmptyINodesIndex(std::vector<bool> nodeVector);
 	std::vector<std::string> getPathDecompose(const std::string& pathname);
 	int findINode(const std::vector<std::string>& pathVector);
 		
