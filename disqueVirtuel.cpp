@@ -132,27 +132,5 @@ namespace TP3
 		return 0;
 	}
 
-	int DisqueVirtuel::findFirstEmptyINodesIndex(vector<bool> nodeVector){
-		int index = 0;
-		for (bool node : nodeVector){
-			if(node == true){
-				return index;
-			}
-		index++;
-		}
-		//retourne -1 si aucun INode libre
-		return -1;
-	}
-
-	int DisqueVirtuel::findLastEmptyINodesIndex(vector<bool> nodeVector){
-		for (int i=nodeVector.size() - 1; i>= 0; i--){
-			if(nodeVector.at(i) == true){
-				return i;
-			}
-		}
-		//retourne -1 si aucun INode libre
-		return -1;
-	}
-
 
 }//Fin du namespace
