@@ -43,10 +43,12 @@ private:
     std::vector<Block> m_blockDisque; // Un vecteur de blocs représentant le disque virtuel
 
     // Vous pouvez ajouter ici des méthodes privées
-		void initBitmapEmptyBlocks();
-		void initBitmapEmptyINodes();
-		void initINodes();
-		void initRoot();
+	void initBitmapEmptyBlocks();
+	void initBitmapEmptyINodes();
+	void initINodes();
+	void initRoot();
+	std::vector<std::string> getPathDecompose(const std::string& pathname);
+	int verifPath(const std::vector<std::string>& pathVector);
 		
 };
 
