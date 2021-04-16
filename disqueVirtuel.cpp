@@ -97,7 +97,23 @@ namespace TP3
 	}
 
 	std::string DisqueVirtuel::bd_ls(const std::string& p_DirLocation) {
-		return "G";
+		std::vector<std::string> a = getPathDecompose(p_DirLocation);
+		/*for(std::string b:a){
+			std::cout << "" << std::endl;
+			std::cout << b << std::endl;
+		}
+			std::cout << "bef" << std::endl;
+		*/
+		int i = findINode(a);
+		/*
+		std::cout << "aft" << std::endl;
+		std::cout << "rep= "  + std::to_string(i) << std::endl;
+		*/
+		//std::cout << std::to_string(m_blockDisque.size()) << std::endl;
+		//std::cout << std::to_string(m_blockDisque.at(1).m_inode->st_size) << std::endl;
+		
+		
+		return "not implemented yet!";
 	}
 
 	int DisqueVirtuel::bd_mkdir(const std::string& p_DirName) {
@@ -191,12 +207,12 @@ namespace TP3
 		int iNodeNumber = ROOT_INODE;
 		int nextiNodeNumber = ROOT_INODE;
 		for (int i=0; i<pathVector.size(); i++){
-			std::string pathName = pathVector[i];
-			iNode *dirINode = m_blockDisque[iNodeNumber + BASE_BLOCK_INODE].m_inode;
-			Block blockDonnees = m_blockDisque[dirINode->st_block];
+			std::string pathName = pathVector.at(i);
+			iNode *dirINode = m_blockDisque.at(iNodeNumber + BASE_BLOCK_INODE).m_inode;
+			Block blockDonnees = m_blockDisque.at(dirINode->st_block); //TODO cause segmentation fault
 			for (int j=0; j<blockDonnees.m_dirEntry.size(); j++){
-				if (pathName.compare(blockDonnees.m_dirEntry[j]->m_filename) == 0){
-					nextiNodeNumber = blockDonnees.m_dirEntry[j]->m_iNode;
+				if (pathName.compare(blockDonnees.m_dirEntry.at(j)->m_filename) == 0){
+					nextiNodeNumber = blockDonnees.m_dirEntry.at(j)->m_iNode;
 					break;
 				}
 			}
