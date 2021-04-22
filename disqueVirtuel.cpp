@@ -92,11 +92,12 @@ namespace TP3
 		m_blockDisque.at(24) = Block(S_IFDE);
 		//peut etre a mettre dans le constructeur
 		// cree . et .. dans le repertoire
-		dirEntry *currentDirEntry = new dirEntry(BASE_BLOCK_INODE+ROOT_INODE, ".");
-		dirEntry *parentDirEntry = new dirEntry(BASE_BLOCK_INODE+ROOT_INODE, "..");
+		dirEntry *currentDirEntry = new dirEntry(ROOT_INODE, ".");
+		dirEntry *parentDirEntry = new dirEntry(ROOT_INODE, "..");
 		m_blockDisque.at(24).m_dirEntry.push_back(currentDirEntry);
 		m_blockDisque.at(24).m_dirEntry.push_back(parentDirEntry);
 		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap[24] = false;
+		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap[ROOT_INODE] = false;
 			
 	}
 
