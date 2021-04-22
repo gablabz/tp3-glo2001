@@ -82,14 +82,14 @@ namespace TP3
 
 	void DisqueVirtuel::initRoot(){
 		//remplacer 24 par premier block libre
-		m_blockDisque.at(BASE_BLOCK_INODE).m_inode->st_block = 24;
-		m_blockDisque.at(BASE_BLOCK_INODE).m_inode->st_nlink = 2;
-		m_blockDisque.at(BASE_BLOCK_INODE).m_inode->st_mode = S_IFDIR;
+		m_blockDisque.at(BASE_BLOCK_INODE+ROOT_INODE).m_inode->st_block = 24;
+		m_blockDisque.at(BASE_BLOCK_INODE+ROOT_INODE).m_inode->st_nlink = 2;
+		m_blockDisque.at(BASE_BLOCK_INODE+ROOT_INODE).m_inode->st_mode = S_IFDIR;
 		m_blockDisque.at(24) = Block(S_IFDE);
 		//peut etre a mettre dans le constructeur
 		// cree . et .. dans le repertoire
-		dirEntry currentDirEntry = dirEntry(BASE_BLOCK_INODE, ".");
-		dirEntry parentDirEntry = dirEntry(BASE_BLOCK_INODE, "..");
+		dirEntry currentDirEntry = dirEntry(BASE_BLOCK_INODE+ROOT_INODE, ".");
+		dirEntry parentDirEntry = dirEntry(BASE_BLOCK_INODE+ROOT_INODE, "..");
 		m_blockDisque.at(24).m_dirEntry.push_back(&currentDirEntry);
 		m_blockDisque.at(24).m_dirEntry.push_back(&parentDirEntry);
 		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap[24] = false;
