@@ -329,6 +329,7 @@ namespace TP3
 		//Cette methode le numero de l'inode correspondant au path. Si le path est invalide, donc si le repertoire n'existe pas, on retourne -1
 		int iNodeNumber = ROOT_INODE;
 		int nextiNodeNumber = ROOT_INODE;
+		if(pathVector.size() == 1 && pathVector.at(0) == ""){return iNodeNumber + BASE_BLOCK_INODE;}
 		for (int i=0; i<pathVector.size(); i++){
 			std::string pathName = pathVector.at(i);
 			iNode *dirINode = m_blockDisque.at(iNodeNumber + BASE_BLOCK_INODE).m_inode;
