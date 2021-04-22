@@ -140,8 +140,40 @@ namespace TP3
 	}
 
 	int DisqueVirtuel::bd_create(const std::string& p_FileName) {
+		//Faire la décomposition du string pour obtenir les noms des repertoires
+		std::vector<std::string> fileName = getPathDecompose(p_FileName);
+		std::vector<std::string> parentName = fileName;
+		parentName.pop_back();
+
+		//Verifier si le path du parent est un path qui existe et si l'inode contient un repertoire
+		int iNodeParent = findINode(parentName);
+		if (iNodeParent == -1 || m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_mode != _S_IFDIR) return 0;
 		
-		return 0;
+		//Verifier duplication
+		int iNodeFile = findINode(fileName);
+		if (iNodeFile != -1) return 0;
+
+		//prendre un inode et un bloc vide pour notre nouveau fichier
+		int emptyINode = findFirstEmptyINodesIndex(m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap);
+		int emptyBlock = findFirstEmptyINodesIndex(m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap);
+		if (emptyBlock == -1 || emptyINode == -1) return 0;
+
+		//Actualiser le bitmap
+		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap.at(emptyINode) = false;
+		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap.at(emptyBlock) = false;
+
+		//Modifier donnees de l'inode
+		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_inode->st_block = emptyBlock;
+		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_inode->st_nlink = 1;
+		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_inode->st_mode = S_IFREG;
+		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_inode->st_size = 0;
+
+		//Ajouter un dirEntry aux donnees du repertoire parent
+		dirEntry *fileEntry = &(dirEntry(emptyINode, fileName.back()));
+		int blockParent = m_blockDisque.at(BASE_BLOCK_INODE+iNodeParent).m_inode->st_block;
+		m_blockDisque.at(blockParent).m_dirEntry.push_back(fileEntry);
+
+		return 1;
 	}
 
 	int DisqueVirtuel::bd_rm(const std::string& p_Filename) {
