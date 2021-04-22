@@ -19,7 +19,11 @@ namespace TP3
 		m_type_donnees = td;
 		
 	}
-	Block::~Block(){}
+	Block::~Block(){
+		for (dirEntry *entry : m_dirEntry) {
+			delete entry;
+		}
+	}
 }//Fin du namespace
 
 

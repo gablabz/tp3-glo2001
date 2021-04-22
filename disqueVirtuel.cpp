@@ -92,12 +92,12 @@ namespace TP3
 		m_blockDisque.at(24) = Block(S_IFDE);
 		//peut etre a mettre dans le constructeur
 		// cree . et .. dans le repertoire
-		dirEntry currentDirEntry = dirEntry(ROOT_INODE, ".");
-		dirEntry parentDirEntry = dirEntry(ROOT_INODE, "..");
-		m_blockDisque.at(24).m_dirEntry.push_back(new dirEntry(ROOT_INODE, "."));
-		m_blockDisque.at(24).m_dirEntry.push_back(new dirEntry(ROOT_INODE, ".."));
+		dirEntry *currentDirEntry = new dirEntry(BASE_BLOCK_INODE+ROOT_INODE, ".");
+		dirEntry *parentDirEntry = new dirEntry(BASE_BLOCK_INODE+ROOT_INODE, "..");
+		m_blockDisque.at(24).m_dirEntry.push_back(currentDirEntry);
+		m_blockDisque.at(24).m_dirEntry.push_back(parentDirEntry);
 		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap[24] = false;
-		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap[ROOT_INODE] = false;
+			
 	}
 
 	std::string DisqueVirtuel::bd_ls(const std::string& p_DirLocation) {
@@ -116,7 +116,7 @@ namespace TP3
 		//std::cout << std::to_string(m_blockDisque.size()) << std::endl;
 		//std::cout << std::to_string(m_blockDisque.at(1).m_inode->st_size) << std::endl;
 		
-		
+
 		return "not implemented yet!";
 	}
 
@@ -154,15 +154,15 @@ namespace TP3
 
 		//Creer le bloc de donnees contenant le vecteur de dirEntries
 		Block newBlock = Block(S_IFDE);
-		dirEntry entryChild = dirEntry(emptyINode, ".");
-		dirEntry entryParent = dirEntry(iNodeParent, "..");
-		newBlock.m_dirEntry.push_back(&entryChild);
-		newBlock.m_dirEntry.push_back(&entryParent);
+		dirEntry *entryChild = new dirEntry(emptyINode, ".");
+		dirEntry *entryParent = new dirEntry(iNodeParent, "..");
+		newBlock.m_dirEntry.push_back(entryChild);
+		newBlock.m_dirEntry.push_back(entryParent);
 
 		//Ajouter un dirEntry aux donnees du repertoire parent
-		dirEntry newDirEntry = (dirEntry(emptyINode, newDirName.back()));
+		dirEntry *newDirEntry = new dirEntry(emptyINode, newDirName.back());
 		int blockParent = m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_block;
-		m_blockDisque.at(blockParent).m_dirEntry.push_back(&newDirEntry);
+		m_blockDisque.at(blockParent).m_dirEntry.push_back(newDirEntry);
 		
 		//Augmenter taille du repertoire parent et nb de links
 		m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_nlink++;
@@ -204,9 +204,9 @@ namespace TP3
 		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_inode->st_size = 0;
 
 		//Ajouter un dirEntry aux donnees du repertoire parent
-		dirEntry fileEntry = dirEntry(emptyINode, fileName.back());
+		dirEntry *fileEntry = new dirEntry(emptyINode, fileName.back());
 		int blockParent = m_blockDisque.at(BASE_BLOCK_INODE+iNodeParent).m_inode->st_block;
-		m_blockDisque.at(blockParent).m_dirEntry.push_back(&fileEntry);
+		m_blockDisque.at(blockParent).m_dirEntry.push_back(fileEntry);
 		
 		//Augmenter taille du repertoire parent
 		m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_size += 28;
@@ -242,7 +242,7 @@ namespace TP3
 		int iNodeToUpdate = findINode(pathVector);
 		int blockToUpdate = m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_block;
 		std::cout << "l<inode precedent est " << iNodeToUpdate << " et son block est " << blockToUpdate << std::endl;
-
+		
 		//Decremente le st_nlink de l<inode precedent
 		int iNodeToUpdate_st_nlink = m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_nlink;
                 m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_nlink = iNodeToUpdate_st_nlink -1;
@@ -251,6 +251,7 @@ namespace TP3
 		std::vector<dirEntry*> dirEntry = m_blockDisque.at(blockToUpdate).m_dirEntry;
 		for(auto it = dirEntry.begin(); it != dirEntry.end();){
 			if ((*it)->m_iNode == iNodeToDelete){
+				delete *it;
 				it = m_blockDisque.at(blockToUpdate).m_dirEntry.erase(it);
 			}else{
 				++it;
@@ -261,13 +262,13 @@ namespace TP3
 		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_nlink = iNodeToDelet_st_nlink - 1;
 		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_nlink - 1;
 		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_block = 0;
- 
+
 		//Libere l<inode et le block dans les bitmaps
 		if(m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_nlink == 0){
 			m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap.at(iNodeToDelete) = true;
 			std::cout << "UFS: Relache i-node " + iNodeToDelete << std::endl;
 		}
- 		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap.at(blockToDelete)= true;
+		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap.at(blockToDelete)= true;
 		std::cout << "UFS: Relache bloc " + blockToDelete << std::endl;
 	}
 	
@@ -296,7 +297,7 @@ namespace TP3
 	std::vector<std::string> DisqueVirtuel::getPathDecompose(const std::string& pathname){
 		//Cette methode divise les parties du pathname selon les '/' et les insere dans un vecteur
 		//La methode retourne un vecteur vide si le path ne commence pas par / ou s'il y a un repertoire sans nom
-
+		
 		std::vector<std::string> pathVector;
 		int index = pathname.find_first_of('/');
 		if (index != 0){
