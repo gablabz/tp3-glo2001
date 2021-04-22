@@ -155,7 +155,7 @@ namespace TP3
 		//Creer le bloc de donnees contenant le vecteur de dirEntries
 		Block newBlock = Block(S_IFDE);
 		newBlock.m_dirEntry.push_back(new dirEntry(emptyINode, "."));
-		newBlock.m_dirEntry.push_back(new dirEntry(iNodeParent, "..");
+		newBlock.m_dirEntry.push_back(new dirEntry(iNodeParent, ".."));
 
 		//Ajouter un dirEntry aux donnees du repertoire parent
 		int blockParent = m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_block;
