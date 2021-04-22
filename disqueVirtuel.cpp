@@ -147,7 +147,7 @@ namespace TP3
 
 		//Verifier si le path du parent est un path qui existe et si l'inode contient un repertoire
 		int iNodeParent = findINode(parentName);
-		if (iNodeParent == -1 || m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_mode != _S_IFDIR) return 0;
+		if (iNodeParent == -1 || m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_mode != S_IFDIR) return 0;
 		
 		//Verifier duplication
 		int iNodeFile = findINode(fileName);
