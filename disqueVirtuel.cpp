@@ -154,10 +154,13 @@ namespace TP3
 
 		//Creer le bloc de donnees contenant le vecteur de dirEntries
 		Block newBlock = Block(S_IFDE);
+		dirEntry entryChild = dirEntry(emptyINode, ".");
+		dirEntry entryParent = dirEntry(iNodeParent, "..");
 		newBlock.m_dirEntry.push_back(new dirEntry(emptyINode, "."));
 		newBlock.m_dirEntry.push_back(new dirEntry(iNodeParent, ".."));
 
 		//Ajouter un dirEntry aux donnees du repertoire parent
+		dirEntry newDirEntry = (dirEntry(emptyINode, newDirName.back()));
 		int blockParent = m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_block;
 		m_blockDisque.at(blockParent).m_dirEntry.push_back(new dirEntry(emptyINode, newDirName.back()));
 		
@@ -201,6 +204,7 @@ namespace TP3
 		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_inode->st_size = 0;
 
 		//Ajouter un dirEntry aux donnees du repertoire parent
+		dirEntry fileEntry = dirEntry(emptyINode, fileName.back());
 		int blockParent = m_blockDisque.at(BASE_BLOCK_INODE+iNodeParent).m_inode->st_block;
 		m_blockDisque.at(blockParent).m_dirEntry.push_back(new dirEntry(emptyINode, fileName.back()));
 		
@@ -330,8 +334,10 @@ namespace TP3
 		if(pathVector.size() == 1 && pathVector.at(0) == ""){return iNodeNumber + BASE_BLOCK_INODE;}
 		for (int i=0; i<pathVector.size(); i++){
 			std::string pathName = pathVector.at(i);
+			std::cout << pathName;
 			iNode *dirINode = m_blockDisque.at(iNodeNumber + BASE_BLOCK_INODE).m_inode;
-			Block blockDonnees = m_blockDisque.at(dirINode->st_block); //TODO cause segmentation fault
+			Block blockDonnees = m_blockDisque.at(dirINode->st_block);
+ 			
 			for (int j=0; j<blockDonnees.m_dirEntry.size(); j++){
 				if (pathName.compare(blockDonnees.m_dirEntry.at(j)->m_filename) == 0){
 					nextiNodeNumber = blockDonnees.m_dirEntry.at(j)->m_iNode;
