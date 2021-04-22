@@ -154,15 +154,12 @@ namespace TP3
 
 		//Creer le bloc de donnees contenant le vecteur de dirEntries
 		Block newBlock = Block(S_IFDE);
-		dirEntry entryChild = dirEntry(emptyINode, ".");
-		dirEntry entryParent = dirEntry(iNodeParent, "..");
-		newBlock.m_dirEntry.push_back(&entryChild);
-		newBlock.m_dirEntry.push_back(&entryParent);
+		newBlock.m_dirEntry.push_back(new dirEntry(emptyINode, "."));
+		newBlock.m_dirEntry.push_back(new dirEntry(iNodeParent, "..");
 
 		//Ajouter un dirEntry aux donnees du repertoire parent
-		dirEntry newDirEntry = (dirEntry(emptyINode, newDirName.back()));
 		int blockParent = m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_block;
-		m_blockDisque.at(blockParent).m_dirEntry.push_back(&newDirEntry);
+		m_blockDisque.at(blockParent).m_dirEntry.push_back(new dirEntry(emptyINode, newDirName.back()));
 		
 		//Augmenter taille du repertoire parent et nb de links
 		m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_nlink++;
@@ -204,9 +201,8 @@ namespace TP3
 		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_inode->st_size = 0;
 
 		//Ajouter un dirEntry aux donnees du repertoire parent
-		dirEntry fileEntry = dirEntry(emptyINode, fileName.back());
 		int blockParent = m_blockDisque.at(BASE_BLOCK_INODE+iNodeParent).m_inode->st_block;
-		m_blockDisque.at(blockParent).m_dirEntry.push_back(&fileEntry);
+		m_blockDisque.at(blockParent).m_dirEntry.push_back(new dirEntry(emptyINode, fileName.back()));
 		
 		//Augmenter taille du repertoire parent
 		m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_size += 28;
@@ -231,7 +227,7 @@ namespace TP3
 		std::cout << "l<inode  est " << iNodeToDelete << " et son block est " << blockToDelete << std::endl;
 		//Si le fichier est un repertoire et n<est pas vide
 		if (m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete ).m_inode->st_mode == S_IFDIR){
-			if (m_blockDisque.at(blockToDelete).m_dirEntry.empty()){
+			if (!m_blockDisque.at(blockToDelete).m_dirEntry.empty()){
 				std::cout << "le fichier est un repertoire et n<est pas vide";
 				return 0;
 			}
@@ -248,8 +244,9 @@ namespace TP3
                 m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_nlink = iNodeToUpdate_st_nlink -1;
 
                 //retirer le dir entry de l'inode precedent
-		std::vector<dirEntry*> dirEntry = m_blockDisque.at(blockToUpdate).m_dirEntry;
-		for(auto it = dirEntry.begin(); it != dirEntry.end();){
+		//std::vector<dirEntry*> dirEntry = m_blockDisque.at(blockToUpdate).m_dirEntry;
+		auto it = m_blockDisque.at(blockToUpdate).m_dirEntry.begin();
+		while (it != m_blockDisque.at(blockToUpdate).m_dirEntry.end()){			
 			if ((*it)->m_iNode == iNodeToDelete){
 				it = m_blockDisque.at(blockToUpdate).m_dirEntry.erase(it);
 			}else{
@@ -267,8 +264,9 @@ namespace TP3
 			m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap.at(iNodeToDelete) = true;
 			std::cout << "UFS: Relache i-node " + iNodeToDelete << std::endl;
 		}
- 		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap.at(blockToDelete)= true;
-		std::cout << "UFS: Relache bloc " + blockToDelete << std::endl;
+ 		//m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap;
+		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap.at(blockToDelete) = true;
+		std::cout << "UFS: Relache bloc " << blockToDelete << std::endl;
 	}
 	
 	int DisqueVirtuel::findFirstEmptyINodesIndex(std::vector<bool> nodeVector) {
