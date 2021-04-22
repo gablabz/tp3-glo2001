@@ -217,15 +217,22 @@ namespace TP3
 	int DisqueVirtuel::bd_rm(const std::string& p_Filename) {
 		//verifie le path
 		std::vector<std::string> pathVector = getPathDecompose(p_Filename);
-		if (pathVector.empty()){return 0;}
+		if (pathVector.empty()){
+			std::cout << "Le path n<est pas valide";
+			return 0;
+		}
 		//trouve l<inode du path et le block
 		int iNodeToDelete = findINode(pathVector);
-		if (iNodeToDelete == -1){return 0;}
+		if (iNodeToDelete == -1){
+			std::cout << "Le path n<existe pas";
+			return 0;
+		}
 		int blockToDelete = m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_block;
-
+		std::cout << "l<inode  est " << iNodeToDelete << " et son block est " << blockToDelete << std::endl;
 		//Si le fichier est un repertoire et n<est pas vide
 		if (m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete ).m_inode->st_mode == S_IFDIR){
 			if (m_blockDisque.at(blockToDelete).m_dirEntry.empty()){
+				std::cout << "le fichier est un repertoire et n<est pas vide";
 				return 0;
 			}
 		}
@@ -234,6 +241,7 @@ namespace TP3
 		pathVector.pop_back();
 		int iNodeToUpdate = findINode(pathVector);
 		int blockToUpdate = m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_block;
+		std::cout << "l<inode precedent est " << iNodeToUpdate << " et son block est " << blockToUpdate << std::endl;
 
 		//Decremente le st_nlink de l<inode precedent
 		int iNodeToUpdate_st_nlink = m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_nlink;
@@ -257,11 +265,24 @@ namespace TP3
 		//Libere l<inode et le block dans les bitmaps
 		if(m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_nlink == 0){
 			m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap.at(iNodeToDelete) = true;
-			std::cout << "UFS: Relache i-node" + iNodeToDelete;
+			std::cout << "UFS: Relache i-node " + iNodeToDelete << std::endl;
 		}
  		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap.at(blockToDelete)= true;
-		std::cout << "UFS: Relache bloc" + blockToDelete;
+		std::cout << "UFS: Relache bloc " + blockToDelete << std::endl;
 	}
+	
+	int DisqueVirtuel::findFirstEmptyINodesIndex(std::vector<bool> nodeVector) {
+		int index = 0;
+		for (bool node : nodeVector){
+			if(node == true){
+				return index;
+			}
+		index++;
+		}
+		//retourne -1 si aucun INode libre
+		return -1;
+	}
+
 	
 	int DisqueVirtuel::findFirstEmptyINodesIndex(std::vector<bool> nodeVector) {
 		int index = 0;
