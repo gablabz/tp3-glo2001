@@ -205,7 +205,40 @@ namespace TP3
 	}
 
 	int DisqueVirtuel::bd_rm(const std::string& p_Filename) {
-		return 0;
+		std::vector<std::string> pathVector = getPathDecompose(p_Filename);
+		if (pathVector.empty()){return 0;}
+		
+		int iNodeToDelete = findINode(pathVector);
+		if (iNodeToDelete == -1){return 0;}
+
+		int blockToDelete = m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_block;
+
+		pathVector.pop_back();
+		int iNodeToUpdate = findINode(pathVector);
+
+		//Decremente le st_nlink de l<inode precedent
+		int iNodeToUpdate_st_nlink = m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_nlink;
+                m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_nlink = iNodeToUpdate_st_nlink -1;
+                //retirer le dir entry de l'inode precedent
+		int blockToUpdate = m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_block;
+		std::vector<dirEntry*> dirEntry = m_blockDisque.at(blockToUpdate).m_dirEntry;
+		for(auto it = dirEntry.begin(); it != dirEntry.end();){
+			if ((*it)->m_iNode == iNodeToDelete){
+				it = m_blockDisque.at(blockToUpdate).m_dirEntry.erase(it);
+			}else{
+				++it;
+			}
+		}
+		// met le st_nlink de l<inode et l<efface
+		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_nlink = 0;
+		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_block = 0;
+ 
+		//Libere l<inode et le block dans les bitmaps
+		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap.at(iNodeToDelete) = true;
+		std::cout << "UFS: Relache i-node" + iNodeToDelete;
+ 		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap.at(blockToDelete)= true;
+		std::cout << "UFS: Relache bloc" + blockToDelete;
+		
 	}
 	
 	int DisqueVirtuel::findFirstEmptyINodesIndex(std::vector<bool> nodeVector) {
