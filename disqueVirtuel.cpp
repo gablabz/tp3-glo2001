@@ -20,7 +20,11 @@ namespace TP3
 		bd_FormatDisk();
 	}
 
-	DisqueVirtuel::~DisqueVirtuel(){}
+	DisqueVirtuel::~DisqueVirtuel(){
+		for (int i=BASE_BLOCK_INODE; i<(BASE_BLOCK_INODE + N_INODE_ON_DISK); i++){
+			delete m_blockDisque.at(i).m_inode;
+		}
+	}
 
 	int DisqueVirtuel::bd_FormatDisk(){
 		try{
@@ -75,8 +79,8 @@ namespace TP3
 		for (int i=BASE_BLOCK_INODE; i<(BASE_BLOCK_INODE + N_INODE_ON_DISK); i++){
 			m_blockDisque.at(i) = Block(S_IFIN);
 			//peut etre a mettre dans le constucteur
-			iNode newINode = iNode(i-BASE_BLOCK_INODE, S_IFREG, 0, 0, 0);
-			m_blockDisque.at(i).m_inode = &newINode;
+			iNode *newINode = new iNode(i-BASE_BLOCK_INODE, S_IFREG, 0, 0, 0);
+			m_blockDisque.at(i).m_inode = newINode;
 		}
 	}
 
@@ -88,8 +92,8 @@ namespace TP3
 		m_blockDisque.at(24) = Block(S_IFDE);
 		//peut etre a mettre dans le constructeur
 		// cree . et .. dans le repertoire
-		dirEntry currentDirEntry = dirEntry(BASE_BLOCK_INODE+ROOT_INODE, ".");
-		dirEntry parentDirEntry = dirEntry(BASE_BLOCK_INODE+ROOT_INODE, "..");
+		dirEntry currentDirEntry = dirEntry(ROOT_INODE, ".");
+		dirEntry parentDirEntry = dirEntry(ROOT_INODE, "..");
 		m_blockDisque.at(24).m_dirEntry.push_back(&currentDirEntry);
 		m_blockDisque.at(24).m_dirEntry.push_back(&parentDirEntry);
 		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap[24] = false;
