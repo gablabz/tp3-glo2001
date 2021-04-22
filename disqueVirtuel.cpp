@@ -119,6 +119,7 @@ namespace TP3
 	int DisqueVirtuel::bd_mkdir(const std::string& p_DirName) {
 		//Faire la décomposition du string pour obtenir les noms des repertoires
 		std::vector<std::string> newDirName = getPathDecompose(p_DirName);
+		if (newDirName.empty()) return 0;
 		std::vector<std::string> parentName = newDirName;
 		parentName.pop_back();
 
@@ -169,6 +170,7 @@ namespace TP3
 	int DisqueVirtuel::bd_create(const std::string& p_FileName) {
 		//Faire la décomposition du string pour obtenir les noms des repertoires
 		std::vector<std::string> fileName = getPathDecompose(p_FileName);
+		if (fileName.empty()) return 0;
 		std::vector<std::string> parentName = fileName;
 		parentName.pop_back();
 
