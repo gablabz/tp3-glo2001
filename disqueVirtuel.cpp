@@ -94,8 +94,8 @@ namespace TP3
 		// cree . et .. dans le repertoire
 		dirEntry currentDirEntry = dirEntry(ROOT_INODE, ".");
 		dirEntry parentDirEntry = dirEntry(ROOT_INODE, "..");
-		m_blockDisque.at(24).m_dirEntry.push_back(&currentDirEntry);
-		m_blockDisque.at(24).m_dirEntry.push_back(&parentDirEntry);
+		m_blockDisque.at(24).m_dirEntry.push_back(new dirEntry(ROOT_INODE, "."));
+		m_blockDisque.at(24).m_dirEntry.push_back(new dirEntry(ROOT_INODE, ".."));
 		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap[24] = false;
 			
 	}
