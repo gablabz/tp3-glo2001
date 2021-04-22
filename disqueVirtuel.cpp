@@ -97,7 +97,7 @@ namespace TP3
 		m_blockDisque.at(24).m_dirEntry.push_back(new dirEntry(ROOT_INODE, "."));
 		m_blockDisque.at(24).m_dirEntry.push_back(new dirEntry(ROOT_INODE, ".."));
 		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap[24] = false;
-			
+		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap[ROOT_INODE] = false;
 	}
 
 	std::string DisqueVirtuel::bd_ls(const std::string& p_DirLocation) {
