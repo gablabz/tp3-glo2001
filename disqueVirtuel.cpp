@@ -258,6 +258,7 @@ namespace TP3
 		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_nlink = iNodeToDelet_st_nlink - 1;
 		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_nlink - 1;
 		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_block = 0;
+		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_size -= 28;
  
 		//Libere l<inode et le block dans les bitmaps
 		if(m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_nlink == 0){
