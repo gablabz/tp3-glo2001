@@ -128,16 +128,14 @@ namespace TP3
 		
 		for(dirEntry* dir:m_blockDisque.at(idBlock).m_dirEntry){
 			
-			std::cout << std::to_string(m_blockDisque.at(dir->m_iNode).m_inode->st_mode) + "\t";
-			iNode* a = m_blockDisque.at(dir->m_iNode).m_inode;
+			std::cout << std::to_string(m_blockDisque.at(dir->m_iNode + BASE_BLOCK_INODE).m_inode->st_mode) + "\t";
 			std::cout << dir->m_filename;
-			std::cout << " Size: \t" + std::to_string(m_blockDisque.at(dir->m_iNode).m_inode->st_size);
-			std::cout << " inode: \t" + std::to_string(m_blockDisque.at(dir->m_iNode).m_inode->st_ino);
-			std::cout << " nlink:\t" + std::to_string(m_blockDisque.at(dir->m_iNode).m_inode->st_nlink);
+			std::cout << " Size: \t" + std::to_string(m_blockDisque.at(dir->m_iNode + BASE_BLOCK_INODE).m_inode->st_size);
+			std::cout << " inode: \t" + std::to_string(m_blockDisque.at(dir->m_iNode + BASE_BLOCK_INODE).m_inode->st_ino);
+			std::cout << " nlink:\t" + std::to_string(m_blockDisque.at(dir->m_iNode + BASE_BLOCK_INODE).m_inode->st_nlink);
 			std::cout << std::endl;
 		}
 
-		
 		return ""; //p_DirLocation + "\n" + stringToReturn;
 	}
 
