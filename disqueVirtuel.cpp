@@ -248,7 +248,7 @@ namespace TP3
 		std::cout << "l<inode  est " << iNodeToDelete << " et son block est " << blockToDelete << std::endl;
 		//Si le fichier est un repertoire et n<est pas vide
 		if (m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete ).m_inode->st_mode == S_IFDIR){
-			if (!m_blockDisque.at(blockToDelete).m_dirEntry.empty()){
+			if (m_blockDisque.at(blockToDelete).m_dirEntry.size() > 2){
 				std::cout << "le fichier est un repertoire et n<est pas vide";
 				return 0;
 			}
