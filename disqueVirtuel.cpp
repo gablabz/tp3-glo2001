@@ -113,23 +113,41 @@ namespace TP3
 	}
 
 	std::string DisqueVirtuel::bd_ls(const std::string& p_DirLocation) {
-		std::vector<std::string> a = getPathDecompose(p_DirLocation);
-		/*for(std::string b:a){
-			std::cout << "" << std::endl;
-			std::cout << b << std::endl;
+		
+		int index = 0;
+		for(Block b:m_blockDisque){
+			std::cout << std::to_string(index) << std::endl;
+			index++;
+			for(dirEntry* c:b.m_dirEntry){
+				//.m_inode->st_mode // fichier ou répertoire
+				std::cout << c->m_filename << std::endl; //nom du fichier ou répertoire
+				std::cout << std::to_string(c->m_iNode) << std::endl; //numéro de l'i-node
+			}
 		}
-			std::cout << "bef" << std::endl;
-		*/
-		int i = findINode(a);
-		/*
-		std::cout << "aft" << std::endl;
-		std::cout << "rep= "  + std::to_string(i) << std::endl;
-		*/
-		//std::cout << std::to_string(m_blockDisque.size()) << std::endl;
-		//std::cout << std::to_string(m_blockDisque.at(1).m_inode->st_size) << std::endl;
-		
-		
-		return "not implemented yet!";
+		std::string stringToReturn = "";
+
+		int iNodeIndex = findINode(getPathDecompose(p_DirLocation));
+		if(iNodeIndex == -1){return "Le repertoire " + p_DirLocation + " n'existe pas!";}
+		for(Block block:m_blockDisque){
+			
+			if(block.m_type_donnees == S_IFIN){
+			std::cout << "st_ino= " + std::to_string(block.m_inode->st_ino) << std::endl; //numéro de l'i-node
+			std::cout << "iNodeIndex= " + std::to_string(iNodeIndex) << std::endl; //numéro de l'i-node
+				if(block.m_inode->st_ino == iNodeIndex){
+					std::cout << "oui" << std::endl; //numéro de l'i-node
+					//fichiers et dossiers à répertorier
+					for(dirEntry* _dir :block.m_dirEntry){
+						std::cout << _dir->m_filename << std::endl; //numéro de l'i-node
+						std::cout << std::to_string(_dir->m_iNode) << std::endl; //numéro de l'i-node
+						stringToReturn += _dir->m_filename; //nom du fichier ou répertoire
+						stringToReturn += std::to_string(_dir->m_iNode); //numéro de l'i-node
+						stringToReturn += "\n";
+					}
+				}
+			}
+			
+		}
+		return p_DirLocation + "\n" + stringToReturn;
 	}
 
 	int DisqueVirtuel::bd_mkdir(const std::string& p_DirName) {
@@ -164,6 +182,8 @@ namespace TP3
 		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_inode->st_mode = S_IFDIR;
 		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_inode->st_size = 56;
 
+		//Indiquer que le block contient des métadonnées
+ 		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_type_donnees = S_IFIN;
 
 		//Ajouter un dirEntry aux donnees du repertoire parent
 		int blockParent = m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_block;
@@ -207,6 +227,9 @@ namespace TP3
 		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_inode->st_nlink = 1;
 		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_inode->st_mode = S_IFREG;
 		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_inode->st_size = 0;
+		
+		//Indiquer que le block contient des métadonnées
+ 		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_type_donnees = S_IFIN;
 
 		//Ajouter un dirEntry aux donnees du repertoire parent
 		int blockParent = m_blockDisque.at(BASE_BLOCK_INODE+iNodeParent).m_inode->st_block;
