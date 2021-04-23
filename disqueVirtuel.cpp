@@ -210,7 +210,6 @@ namespace TP3
 		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap.at(emptyINode) = false;
 		std::cout << "UFS: saisir i-node " << emptyINode << std::endl;
 		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap.at(emptyBlock) = false;
-		std::cout << "UFS: saisir bloc  " << emptyBlock << std::endl;
 
 		//Modifier donnees de l'inode
 		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_inode->st_block = emptyBlock;
