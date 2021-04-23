@@ -1,75 +1,58 @@
 /**
- * \file block.h
- * \brief Gestion d'un bloc dans un disque virtuel.
+ * \file disqueVirtuel.h
+ * \brief Gestion d'un disque virtuel.
  * \author GLO-2001
  * \version 0.1
- * \date 2021
+ * \date  2021
  *
  *  Travail pratique numéro 3
  *
  */
 
-#include <string>
-#include <vector>
+#include "block.h"
 
-#ifndef _BLOCK__H
-#define _BLOCK__H
+#ifndef _DISQUEVIRTUEL__H
+#define _DISQUEVIRTUEL__H
 
 namespace TP3
 {
 
-// Les flags suivants sont pour st_mode
-#define S_IFREG  0010   // Indique que l'i-node est un fichier ordinaire
-#define S_IFDIR  0020   // Indique que l'i-node est un repertoire
-// Les flags suivants sont pour identifier le type de données stockées dans le bloc
-#define S_IFBL 	0010	// indique que le bloc contient le bitmap des blocs libres
-#define S_IFIL 	0020	// indique que le bloc contient le bitmap des inodes libres
-#define S_IFIN 	0030	// indique que le bloc contient des métadonnées (donc un inode)
-#define S_IFDE 	0040	// indique que le bloc contient la liste des dirEntry (informations d'un répertoire)
+#define N_INODE_ON_DISK   20	// nombre maximal d'i-nodes (donc de fichiers) sur votre disque
+#define N_BLOCK_ON_DISK 128	// nombre de blocs sur le disque au complet
+#define FREE_BLOCK_BITMAP 2	// numero du bloc contenant le bitmap des block libres
+#define FREE_INODE_BITMAP 3	// numero du bloc contenant le bitmap des i-nodes libres
+#define BASE_BLOCK_INODE  4     // bloc de depart ou les i-nodes sont stockes sur disque
+#define ROOT_INODE        1     // numero du i-node correspondant au repertoire racine
 
-/**
- * \struct iNode
- * \brief Une struture utilisée pour stocker les métadonnées
- */
-struct iNode
-{
-	size_t st_ino;		// numero de l'i-node
-	size_t st_mode;		// S_IFREG ou S_IFDIR. Normalement contient aussi RWX
-	size_t st_nlink;	// nombre de lien pointant vers l'i-node
-	size_t st_size;		// taille du fichier, en octets
-	size_t st_block;	// numero du block (un seul bloc dans le TP pour simplifier)
-
-	iNode(size_t i, size_t m, size_t n, size_t s, size_t b) : st_ino(i), st_mode(m), st_nlink(n), st_size(s), st_block(b) {}
-};
-
-/**
- * \struct dirEntry
- * \brief Une struture utilisée pour stocker les données d'un répertoire
- */
-struct dirEntry
-{
-	size_t m_iNode;   		// numero de l'i-node
-	std::string m_filename;	// nom du fichier ou du répertoire
-
-	dirEntry(size_t i, std::string m) : m_iNode(i), m_filename(m) {}
-};
-
-/**
- *
- */
-class Block {
+class DisqueVirtuel {
 public:
-	Block();			// Constructeur par défaut
-    Block(size_t td);	// Constructeur pour initialiser m_type_donnees
-    ~Block();			// Destructeur
+	DisqueVirtuel();
+	~DisqueVirtuel();
+
+	// Méthodes demandées
+	int bd_FormatDisk();
+	std::string bd_ls(const std::string& p_DirLocation);
+	int bd_mkdir(const std::string& p_DirName);
+	int bd_create(const std::string& p_FileName);
+	int bd_rm(const std::string& p_Filename);
+
+	// Vous pouvez ajouter ici d'autres méthodes publiques
 
 private:
-	// Il est interdit de modifier ce modèle d'implémentation (i.e. les types des membres privés)!
-	size_t m_type_donnees; 		// peut être S_IFIL, S_IFBL, S_IFIN ou S_IFDE
-    std::vector<bool> m_bitmap;	// pour stocker la liste des blocks libres ou les inodes libres
-    iNode * m_inode;			// pour stocker les métadonnées d'un fichier ou d'un répertoire
-    std::vector<dirEntry*> m_dirEntry;	// pour stocker la liste des dirEntry (les informations d'un répertoire)
-    friend class DisqueVirtuel;	// La classe DisqueVirtuel est amie pour avoir accès à la partie privée !
+	// Il est interdit de modifier ce modèle d'implémentation (i.e le type de m_blockDisque)!
+    std::vector<Block> m_blockDisque; // Un vecteur de blocs représentant le disque virtuel
+
+    // Vous pouvez ajouter ici des méthodes privées
+	void initBitmapEmptyBlocks();
+	void initBitmapEmptyINodes();
+	void initINodes();
+	void initRoot();
+	void create_empty_repo(int inode, int block, int iNodeParent);
+	int findFirstEmptyINodesIndex(std::vector<bool> nodeVector);
+	int findLastEmptyINodesIndex(std::vector<bool> nodeVector);
+	std::vector<std::string> getPathDecompose(const std::string& pathname);
+	int findINode(const std::vector<std::string>& pathVector);
+		
 };
 
 }//Fin du namespace
