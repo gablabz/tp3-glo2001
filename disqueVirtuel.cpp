@@ -118,7 +118,6 @@ namespace TP3
 		int iNodeIndex = findINode(getPathDecompose(p_DirLocation));
 		if(iNodeIndex == -1){return "Le repertoire " + p_DirLocation + " n'existe pas!";}
 		for(Block block:m_blockDisque){
-			std::cout << std::to_string(index) << std::endl;
 			for(dirEntry* dir:block.m_dirEntry){
 				if(dir->m_iNode + BASE_BLOCK_INODE == iNodeIndex){
 					std::cout << dir->m_filename << std::endl; //numéro de l'i-node
