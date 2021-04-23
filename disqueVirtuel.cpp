@@ -92,12 +92,13 @@ namespace TP3
 		m_blockDisque.at(BASE_BLOCK_INODE + N_INODE_ON_DISK) = Block(S_IFDE);
 		//peut etre a mettre dans le constructeur
 		// cree . et .. dans le repertoire
-		dirEntry currentDirEntry = dirEntry(ROOT_INODE, ".");
+		create_empty_repo(ROOT_INODE,findFirstEmptyINodesIndex(m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap),ROOT_INODE);
+		/*dirEntry currentDirEntry = dirEntry(ROOT_INODE, ".");
 		dirEntry parentDirEntry = dirEntry(ROOT_INODE, "..");
 		m_blockDisque.at(BASE_BLOCK_INODE + N_INODE_ON_DISK).m_dirEntry.push_back(new dirEntry(ROOT_INODE, "."));
 		m_blockDisque.at(BASE_BLOCK_INODE + N_INODE_ON_DISK).m_dirEntry.push_back(new dirEntry(ROOT_INODE, ".."));
 		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap[BASE_BLOCK_INODE + N_INODE_ON_DISK] = false;
-		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap[ROOT_INODE] = false;
+		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap[ROOT_INODE] = false;*/
 	}
 	
 	void DisqueVirtuel::create_empty_repo(int inode, int block, int iNodeParent) {
@@ -116,49 +117,28 @@ namespace TP3
 		
 		std::string stringToReturn = "";
 		int iNodeIndex = findINode(getPathDecompose(p_DirLocation));
-		if(iNodeIndex == -1){return "Le repertoire " + p_DirLocation + " n'existe pas!";}
+		if(iNodeIndex == -1){
+			return "Le repertoire " + p_DirLocation + " n'existe pas!";
+		}
 
 
 		int idBlock = m_blockDisque.at(iNodeIndex).m_inode->st_block;
-
+		
+		std::cout << p_DirLocation << std::endl;
+		
 		for(dirEntry* dir:m_blockDisque.at(idBlock).m_dirEntry){
-			std::cout << dir->m_filename << std::endl;
+			
+			std::cout << std::to_string(m_blockDisque.at(dir->m_iNode).m_inode->st_mode) + "\t";
+			iNode* a = m_blockDisque.at(dir->m_iNode).m_inode;
+			std::cout << dir->m_filename;
+			std::cout << " Size: \t" + std::to_string(m_blockDisque.at(dir->m_iNode).m_inode->st_size);
+			std::cout << " inode: \t" + std::to_string(m_blockDisque.at(dir->m_iNode).m_inode->st_ino);
+			std::cout << " nlink:\t" + std::to_string(m_blockDisque.at(dir->m_iNode).m_inode->st_nlink);
+			std::cout << std::endl;
 		}
 
-		/*if(iNodeIndex == -1){return "Le repertoire " + p_DirLocation + " n'existe pas!";}
-		for(Block block:m_blockDisque){
-			for(dirEntry* dir:block.m_dirEntry){
-				if(dir->m_iNode + BASE_BLOCK_INODE == iNodeIndex){
-					std::cout << dir->m_filename << std::endl; //numéro de l'i-node
-					std::cout << std::to_string(dir->m_iNode) << std::endl; //numéro de l'i-node
-					stringToReturn += dir->m_filename; //nom du fichier ou répertoire
-					stringToReturn += std::to_string(dir->m_iNode); //numéro de l'i-node
-					stringToReturn += "\n";
-				}
-			}
-		}*/
 		
-		/*for(Block block:m_blockDisque){
-			
-			if(block.m_type_donnees == S_IFIN){
-			//std::cout << "st_inod= " + std::to_string(block.m_inode->st_ino) << std::endl; //numéro de l'i-node
-			//std::cout << "iNodeIndex= " + std::to_string(iNodeIndex) << std::endl; //numéro de l'i-node
-					
-				//fichiers et dossiers à répertorier
-				for(dirEntry* dir:block.m_dirEntry){
-					std::cout << "allo" << std::endl;
-					std::cout << "ici: " + std::to_string(dir->m_iNode) << std::endl; //numéro de l'i-node
-					if(dir->m_iNode + BASE_BLOCK_INODE == iNodeIndex){
-						std::cout << dir->m_filename << std::endl; //numéro de l'i-node
-						std::cout << std::to_string(dir->m_iNode) << std::endl; //numéro de l'i-node
-						stringToReturn += dir->m_filename; //nom du fichier ou répertoire
-						stringToReturn += std::to_string(dir->m_iNode); //numéro de l'i-node
-						stringToReturn += "\n";
-					}
-				}
-			}
-		}*/
-		return p_DirLocation + "\n" + stringToReturn;
+		return ""; //p_DirLocation + "\n" + stringToReturn;
 	}
 
 	int DisqueVirtuel::bd_mkdir(const std::string& p_DirName) {
