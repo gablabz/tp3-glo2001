@@ -119,7 +119,7 @@ namespace TP3
 		}
 
 
-		int idBlock = m_blockDisque.at(iNodeIndex).m_inode->st_block;
+		int idBlock = m_blockDisque.at(iNodeIndex + BASE_BLOCK_INODE).m_inode->st_block;
 		
 		stringToReturn += p_DirLocation + " \n";
 		
@@ -354,7 +354,7 @@ namespace TP3
 		if(pathVector.size() == 1 && pathVector.at(0) == ""){return iNodeNumber;}
 		for (int i=0; i<pathVector.size(); i++){
 			std::string pathName = pathVector.at(i);
-			int blockToVerify = m_blockDisque.at(nextiNodeNumber).m_inode->st_block;
+			int blockToVerify = m_blockDisque.at(nextiNodeNumber + BASE_BLOCK_INODE).m_inode->st_block;
 			for (int j=0; j<m_blockDisque.at(blockToVerify).m_dirEntry.size(); j++){
 				if (pathName.compare(m_blockDisque.at(blockToVerify).m_dirEntry.at(j)->m_filename) == 0){
 					nextiNodeNumber = m_blockDisque.at(blockToVerify).m_dirEntry.at(j)->m_iNode;
