@@ -285,7 +285,7 @@ namespace TP3
 		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap.at(blockToDelete) = true;
 		std::cout << "UFS: Relache bloc   " << blockToDelete << std::endl;
 		
-		return 1
+		return 1;
 	}
 	
 	int DisqueVirtuel::findFirstEmptyINodesIndex(std::vector<bool> nodeVector) {
