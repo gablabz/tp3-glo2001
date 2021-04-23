@@ -121,19 +121,23 @@ namespace TP3
 
 		int idBlock = m_blockDisque.at(iNodeIndex).m_inode->st_block;
 		
-		std::cout << p_DirLocation << std::endl;
+		stringToReturn += p_DirLocation + " \n";
 		
 		for(dirEntry* dir:m_blockDisque.at(idBlock).m_dirEntry){
-			
-			std::cout << std::to_string(m_blockDisque.at(dir->m_iNode + BASE_BLOCK_INODE).m_inode->st_mode) + "\t";
-			std::cout << dir->m_filename;
-			std::cout << " Size: \t" + std::to_string(m_blockDisque.at(dir->m_iNode + BASE_BLOCK_INODE).m_inode->st_size);
-			std::cout << " inode: \t" + std::to_string(m_blockDisque.at(dir->m_iNode + BASE_BLOCK_INODE).m_inode->st_ino);
-			std::cout << " nlink:\t" + std::to_string(m_blockDisque.at(dir->m_iNode + BASE_BLOCK_INODE).m_inode->st_nlink);
-			std::cout << std::endl;
+			//Déterminer s'il s'agit d'un fichier ou d'un répertoire
+			if(m_blockDisque.at(dir->m_iNode + BASE_BLOCK_INODE).m_inode->st_mode == 16){
+				stringToReturn += "d \t";
+			}else {
+				stringToReturn += "- \t";
+			}
+			stringToReturn += dir->m_filename;
+			stringToReturn += " Size: \t" + std::to_string(m_blockDisque.at(dir->m_iNode + BASE_BLOCK_INODE).m_inode->st_size);
+			stringToReturn += " inode: \t" + std::to_string(m_blockDisque.at(dir->m_iNode + BASE_BLOCK_INODE).m_inode->st_ino);
+			stringToReturn += " nlink:\t" + std::to_string(m_blockDisque.at(dir->m_iNode + BASE_BLOCK_INODE).m_inode->st_nlink);
+			stringToReturn += "\n";
 		}
 
-		return ""; //p_DirLocation + "\n" + stringToReturn;
+		return stringToReturn;
 	}
 
 	int DisqueVirtuel::bd_mkdir(const std::string& p_DirName) {
