@@ -286,8 +286,10 @@ namespace TP3
 		}
  		//m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap;
 		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap.at(blockToDelete) = true;
-		std::cout << "UFS: Relache i-node " << blockToDelete << std::endl;
-		std::cout << "UFS: Relache bloc   " << blockToDelete << std::endl;
+		std::cout << "UFS: Relache i-node " << iNodeToDelete << std::endl;
+		if (m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete ).m_inode->st_mode == S_IFDIR) {
+			std::cout << "UFS: Relache bloc   " << blockToDelete << std::endl;
+		}
 		
 		
 		return 1;
