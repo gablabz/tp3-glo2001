@@ -117,6 +117,15 @@ namespace TP3
 		std::string stringToReturn = "";
 		int iNodeIndex = findINode(getPathDecompose(p_DirLocation));
 		if(iNodeIndex == -1){return "Le repertoire " + p_DirLocation + " n'existe pas!";}
+
+
+		int idBlock = m_blockDisque.at(iNodeIndex).m_inode->st_block;
+
+		for(dirEntry* dir:m_blockDisque.at(idBlock).m_dirEntry){
+			std::cout << dir->m_filename << std::endl;
+		}
+
+		/*if(iNodeIndex == -1){return "Le repertoire " + p_DirLocation + " n'existe pas!";}
 		for(Block block:m_blockDisque){
 			for(dirEntry* dir:block.m_dirEntry){
 				if(dir->m_iNode + BASE_BLOCK_INODE == iNodeIndex){
@@ -127,7 +136,7 @@ namespace TP3
 					stringToReturn += "\n";
 				}
 			}
-		}
+		}*/
 		
 		/*for(Block block:m_blockDisque){
 			
