@@ -112,8 +112,10 @@ namespace TP3
 
 	std::string DisqueVirtuel::bd_ls(const std::string& p_DirLocation) {
 		
-		std::string stringToReturn = "";
-		int iNodeIndex = findINode(getPathDecompose(p_DirLocation));
+		std::stringstream output;
+		
+		//Vérifie si le répertoire existe
+		int iNodeIndex = findINode(getPathDecompose(p_DirLocation));		
 		if(iNodeIndex == -1){
 			return "Le repertoire " + p_DirLocation + " n'existe pas!";
 		}
@@ -121,23 +123,23 @@ namespace TP3
 
 		int idBlock = m_blockDisque.at(iNodeIndex + BASE_BLOCK_INODE).m_inode->st_block;
 		
-		stringToReturn += p_DirLocation + " \n";
-		
+		output << p_DirLocation << " \n";		
 		for(dirEntry* dir:m_blockDisque.at(idBlock).m_dirEntry){
 			//Déterminer s'il s'agit d'un fichier ou d'un répertoire
 			if(m_blockDisque.at(dir->m_iNode + BASE_BLOCK_INODE).m_inode->st_mode == 16){
-				stringToReturn += "d \t";
+				output << "d" << std::setw(12);
 			}else {
-				stringToReturn += "- \t";
+				output << "-" << std::setw(12);
 			}
-			stringToReturn += dir->m_filename;
-			stringToReturn += " Size: \t" + std::to_string(m_blockDisque.at(dir->m_iNode + BASE_BLOCK_INODE).m_inode->st_size);
-			stringToReturn += " inode: \t" + std::to_string(m_blockDisque.at(dir->m_iNode + BASE_BLOCK_INODE).m_inode->st_ino);
-			stringToReturn += " nlink:\t" + std::to_string(m_blockDisque.at(dir->m_iNode + BASE_BLOCK_INODE).m_inode->st_nlink);
-			stringToReturn += "\n";
+
+			output << std::right << std::setw(12) << dir->m_filename;
+			output << std::left << " Size: "  << std::setw(12) << std::right << std::to_string(m_blockDisque.at(dir->m_iNode + BASE_BLOCK_INODE).m_inode->st_size);
+			output << std::left << " inode: " << std::setw(12) << std::right << std::to_string(m_blockDisque.at(dir->m_iNode + BASE_BLOCK_INODE).m_inode->st_ino);
+			output << std::left << " nlink: " << std::setw(12) << std::right << std::to_string(m_blockDisque.at(dir->m_iNode + BASE_BLOCK_INODE).m_inode->st_nlink);
+			output << "\n";
 		}
 
-		return stringToReturn;
+		return output.str();
 	}
 
 	int DisqueVirtuel::bd_mkdir(const std::string& p_DirName) {
