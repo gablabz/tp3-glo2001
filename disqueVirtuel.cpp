@@ -280,10 +280,9 @@ namespace TP3
 		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_size -= 28;
  
 		//Libere l<inode et le block dans les bitmaps
-		if(m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_nlink == 0){
-			m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap.at(iNodeToDelete) = true;
-			std::cout << "UFS: Relache i-node " + iNodeToDelete << std::endl;
-		}
+		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap.at(iNodeToDelete) = true;
+		
+		
  		//m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap;
 		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap.at(blockToDelete) = true;
 		std::cout << "UFS: Relache i-node " << iNodeToDelete << std::endl;
