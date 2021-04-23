@@ -10,7 +10,9 @@
  */
 
 #include "disqueVirtuel.h"
+#include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <string>
 //vous pouvez inclure d'autres librairies si c'est nécessaire
 
