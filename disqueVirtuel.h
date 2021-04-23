@@ -47,7 +47,7 @@ private:
 	void initBitmapEmptyINodes();
 	void initINodes();
 	void initRoot();
-	void create_empty_repo(int inode, int block);
+	void create_empty_repo(int inode, int block, int iNodeParent);
 	int findFirstEmptyINodesIndex(std::vector<bool> nodeVector);
 	int findLastEmptyINodesIndex(std::vector<bool> nodeVector);
 	std::vector<std::string> getPathDecompose(const std::string& pathname);
