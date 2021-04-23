@@ -93,12 +93,8 @@ namespace TP3
 		//peut etre a mettre dans le constructeur
 		// cree . et .. dans le repertoire
 		create_empty_repo(ROOT_INODE,findFirstEmptyINodesIndex(m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap),ROOT_INODE);
-		/*dirEntry currentDirEntry = dirEntry(ROOT_INODE, ".");
-		dirEntry parentDirEntry = dirEntry(ROOT_INODE, "..");
-		m_blockDisque.at(BASE_BLOCK_INODE + N_INODE_ON_DISK).m_dirEntry.push_back(new dirEntry(ROOT_INODE, "."));
-		m_blockDisque.at(BASE_BLOCK_INODE + N_INODE_ON_DISK).m_dirEntry.push_back(new dirEntry(ROOT_INODE, ".."));
-		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap[BASE_BLOCK_INODE + N_INODE_ON_DISK] = false;
-		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap[ROOT_INODE] = false;*/
+		std::cout << "UFS: saisir i-node " << ROOT_INODE << std::endl;
+		std::cout << "UFS: saisir bloc  " << m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap << std::endl;
 	}
 	
 	void DisqueVirtuel::create_empty_repo(int inode, int block, int iNodeParent) {
@@ -160,8 +156,8 @@ namespace TP3
 		if (emptyBlock == -1 || emptyINode == -1) return 0;
 
 		//Actualiser le bitmap
-		std::cout << "UFS: Saisie i-node " << emptyINode << std::endl;
-		std::cout << "UFS: Saisie bloc " << emptyBlock << std::endl;
+		std::cout << "UFS: saisir i-node " << emptyINode << std::endl;
+		std::cout << "UFS: saisir bloc   " << emptyBlock << std::endl;
 		
 		create_empty_repo(emptyINode, emptyBlock, iNodeParent);
 			
@@ -207,9 +203,9 @@ namespace TP3
 
 		//Actualiser le bitmap
 		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap.at(emptyINode) = false;
-		std::cout << "UFS: Saisie i-node " << emptyINode << std::endl;
+		std::cout << "UFS: saisir i-node " << emptyINode << std::endl;
 		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap.at(emptyBlock) = false;
-		std::cout << "UFS: Saisie bloc " << emptyBlock << std::endl;
+		std::cout << "UFS: saisir bloc  " << emptyBlock << std::endl;
 
 		//Modifier donnees de l'inode
 		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_inode->st_block = emptyBlock;
@@ -287,7 +283,9 @@ namespace TP3
 		}
  		//m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap;
 		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap.at(blockToDelete) = true;
-		std::cout << "UFS: Relache bloc " << blockToDelete << std::endl;
+		std::cout << "UFS: Relache bloc   " << blockToDelete << std::endl;
+		
+		return 1
 	}
 	
 	int DisqueVirtuel::findFirstEmptyINodesIndex(std::vector<bool> nodeVector) {
