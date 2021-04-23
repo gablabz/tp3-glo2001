@@ -245,7 +245,6 @@ namespace TP3
 			return 0;
 		}
 		int blockToDelete = m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_block;
-		std::cout << "l<inode  est " << iNodeToDelete << " et son block est " << blockToDelete << std::endl;
 		//Si le fichier est un repertoire et n<est pas vide
 		if (m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete ).m_inode->st_mode == S_IFDIR){
 			if (m_blockDisque.at(blockToDelete).m_dirEntry.size() > 2){
@@ -258,7 +257,6 @@ namespace TP3
 		pathVector.pop_back();
 		int iNodeToUpdate = findINode(pathVector);
 		int blockToUpdate = m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_block;
-		std::cout << "l<inode precedent est " << iNodeToUpdate << " et son block est " << blockToUpdate << std::endl;
 
 		//Decremente le st_nlink de l<inode precedent
 		int iNodeToUpdate_st_nlink = m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_nlink;
@@ -288,7 +286,9 @@ namespace TP3
 		}
  		//m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap;
 		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap.at(blockToDelete) = true;
+		std::cout << "UFS: Relache i-node " << blockToDelete << std::endl;
 		std::cout << "UFS: Relache bloc   " << blockToDelete << std::endl;
+		
 		
 		return 1;
 	}
