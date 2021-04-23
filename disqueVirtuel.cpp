@@ -132,8 +132,8 @@ namespace TP3
 		if (iNodeParent == -1 || m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_mode != S_IFDIR) return 0;
 		
 		//Verifier duplication
-		int iNodeFile = findINode(newDirName);
-		if (iNodeFile != -1) return 0;
+		//int iNodeFile = findINode(newDirName);
+		//if (iNodeFile != -1) return 0;
 
 		//prendre un inode et un bloc vide pour notre nouveau repertoire
 		int emptyINode = findFirstEmptyINodesIndex(m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap);
@@ -330,11 +330,10 @@ namespace TP3
 		if(pathVector.size() == 1 && pathVector.at(0) == ""){return iNodeNumber + BASE_BLOCK_INODE;}
 		for (int i=0; i<pathVector.size(); i++){
 			std::string pathName = pathVector.at(i);
-			iNode *dirINode = m_blockDisque.at(iNodeNumber + BASE_BLOCK_INODE).m_inode;
-			Block blockDonnees = m_blockDisque.at(dirINode->st_block); //TODO cause segmentation fault
-			for (int j=0; j<blockDonnees.m_dirEntry.size(); j++){
-				if (pathName.compare(blockDonnees.m_dirEntry.at(j)->m_filename) == 0){
-					nextiNodeNumber = blockDonnees.m_dirEntry.at(j)->m_iNode;
+			int blockToVerify = m_blockDisque.at(nextiNodeNumber + BASE_BLOCK_INODE).m_inode->st_block;
+			for (int j=0; j<m_blockDisque.at(blockToVerify).m_dirEntry.size(); j++){
+				if (pathName.compare(m_blockDisque.at(blockToVerify).m_dirEntry.at(j)->m_filename) == 0){
+					nextiNodeNumber = m_blockDisque.at(blockToVerify).m_dirEntry.at(j)->m_iNode;
 					break;
 				}
 			}
