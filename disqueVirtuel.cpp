@@ -92,9 +92,10 @@ namespace TP3
 		m_blockDisque.at(BASE_BLOCK_INODE + N_INODE_ON_DISK) = Block(S_IFDE);
 		//peut etre a mettre dans le constructeur
 		// cree . et .. dans le repertoire
-		create_empty_repo(ROOT_INODE,findFirstEmptyINodesIndex(m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap),ROOT_INODE);
+		int firstBlock = findFirstEmptyINodesIndex(m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap);
+		create_empty_repo(ROOT_INODE, firstBlock,ROOT_INODE);
 		std::cout << "UFS: saisir i-node " << ROOT_INODE << std::endl;
-		std::cout << "UFS: saisir bloc  " << m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap << std::endl;
+		std::cout << "UFS: saisir bloc  " << firstBlock << std::endl;
 	}
 	
 	void DisqueVirtuel::create_empty_repo(int inode, int block, int iNodeParent) {
