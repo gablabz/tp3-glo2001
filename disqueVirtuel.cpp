@@ -114,39 +114,42 @@ namespace TP3
 
 	std::string DisqueVirtuel::bd_ls(const std::string& p_DirLocation) {
 		
-		int index = 0;
-		for(Block b:m_blockDisque){
-			std::cout << std::to_string(index) << std::endl;
-			index++;
-			for(dirEntry* c:b.m_dirEntry){
-				//.m_inode->st_mode // fichier ou répertoire
-				std::cout << c->m_filename << std::endl; //nom du fichier ou répertoire
-				std::cout << std::to_string(c->m_iNode) << std::endl; //numéro de l'i-node
-			}
-		}
 		std::string stringToReturn = "";
-
 		int iNodeIndex = findINode(getPathDecompose(p_DirLocation));
 		if(iNodeIndex == -1){return "Le repertoire " + p_DirLocation + " n'existe pas!";}
 		for(Block block:m_blockDisque){
+			std::cout << std::to_string(index) << std::endl;
+			for(dirEntry* dir:block.m_dirEntry){
+				if(dir->m_iNode + BASE_BLOCK_INODE == iNodeIndex){
+					std::cout << dir->m_filename << std::endl; //numéro de l'i-node
+					std::cout << std::to_string(dir->m_iNode) << std::endl; //numéro de l'i-node
+					stringToReturn += dir->m_filename; //nom du fichier ou répertoire
+					stringToReturn += std::to_string(dir->m_iNode); //numéro de l'i-node
+					stringToReturn += "\n";
+				}
+			}
+		}
+		
+		/*for(Block block:m_blockDisque){
 			
 			if(block.m_type_donnees == S_IFIN){
-			std::cout << "st_ino= " + std::to_string(block.m_inode->st_ino) << std::endl; //numéro de l'i-node
-			std::cout << "iNodeIndex= " + std::to_string(iNodeIndex) << std::endl; //numéro de l'i-node
-				if(block.m_inode->st_ino == iNodeIndex){
-					std::cout << "oui" << std::endl; //numéro de l'i-node
-					//fichiers et dossiers à répertorier
-					for(dirEntry* _dir :block.m_dirEntry){
-						std::cout << _dir->m_filename << std::endl; //numéro de l'i-node
-						std::cout << std::to_string(_dir->m_iNode) << std::endl; //numéro de l'i-node
-						stringToReturn += _dir->m_filename; //nom du fichier ou répertoire
-						stringToReturn += std::to_string(_dir->m_iNode); //numéro de l'i-node
+			//std::cout << "st_inod= " + std::to_string(block.m_inode->st_ino) << std::endl; //numéro de l'i-node
+			//std::cout << "iNodeIndex= " + std::to_string(iNodeIndex) << std::endl; //numéro de l'i-node
+					
+				//fichiers et dossiers à répertorier
+				for(dirEntry* dir:block.m_dirEntry){
+					std::cout << "allo" << std::endl;
+					std::cout << "ici: " + std::to_string(dir->m_iNode) << std::endl; //numéro de l'i-node
+					if(dir->m_iNode + BASE_BLOCK_INODE == iNodeIndex){
+						std::cout << dir->m_filename << std::endl; //numéro de l'i-node
+						std::cout << std::to_string(dir->m_iNode) << std::endl; //numéro de l'i-node
+						stringToReturn += dir->m_filename; //nom du fichier ou répertoire
+						stringToReturn += std::to_string(dir->m_iNode); //numéro de l'i-node
 						stringToReturn += "\n";
 					}
 				}
 			}
-			
-		}
+		}*/
 		return p_DirLocation + "\n" + stringToReturn;
 	}
 
