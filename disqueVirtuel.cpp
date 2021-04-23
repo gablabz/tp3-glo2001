@@ -86,25 +86,28 @@ namespace TP3
 
 	void DisqueVirtuel::initRoot(){
 		//remplacer 24 par premier block libre
-		m_blockDisque.at(BASE_BLOCK_INODE+ROOT_INODE).m_inode->st_block = 24;
+		m_blockDisque.at(BASE_BLOCK_INODE+ROOT_INODE).m_inode->st_block = BASE_BLOCK_INODE + N_INODE_ON_DISK;
 		m_blockDisque.at(BASE_BLOCK_INODE+ROOT_INODE).m_inode->st_nlink = 2;
 		m_blockDisque.at(BASE_BLOCK_INODE+ROOT_INODE).m_inode->st_mode = S_IFDIR;
-		m_blockDisque.at(24) = Block(S_IFDE);
+		m_blockDisque.at(BASE_BLOCK_INODE + N_INODE_ON_DISK) = Block(S_IFDE);
 		//peut etre a mettre dans le constructeur
 		// cree . et .. dans le repertoire
 		dirEntry currentDirEntry = dirEntry(ROOT_INODE, ".");
 		dirEntry parentDirEntry = dirEntry(ROOT_INODE, "..");
-		m_blockDisque.at(24).m_dirEntry.push_back(new dirEntry(ROOT_INODE, "."));
-		m_blockDisque.at(24).m_dirEntry.push_back(new dirEntry(ROOT_INODE, ".."));
-		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap[24] = false;
+		m_blockDisque.at(BASE_BLOCK_INODE + N_INODE_ON_DISK).m_dirEntry.push_back(new dirEntry(ROOT_INODE, "."));
+		m_blockDisque.at(BASE_BLOCK_INODE + N_INODE_ON_DISK).m_dirEntry.push_back(new dirEntry(ROOT_INODE, ".."));
+		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap[BASE_BLOCK_INODE + N_INODE_ON_DISK] = false;
 		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap[ROOT_INODE] = false;
 	}
 	
 	void DisqueVirtuel::create_empty_repo(int inode, int block) {
-		dirEntry currentDirEntry = dirEntry(inode, ".");
-		dirEntry parentDirEntry = dirEntry(inode, "..");
-		m_blockDisque.at(block).m_dirEntry.push_back(new dirEntry(ROOT_INODE, "."));
-		m_blockDisque.at(block).m_dirEntry.push_back(new dirEntry(ROOT_INODE, ".."));
+		m_blockDisque.at(emptyBlock).m_type_donnees = S_IFDE;
+		for (dirEntry *entry : m_blockDisque.at(emptyBlock).m_dirEntry) {
+			delete entry;
+		}
+		m_blockDisque.at(emptyBlock).m_dirEntry.clear();
+		m_blockDisque.at(emptyBlock).m_dirEntry.push_back(new dirEntry(emptyINode, "."));
+		m_blockDisque.at(emptyBlock).m_dirEntry.push_back(new dirEntry(iNodeParent, ".."));
 		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap[block] = false;
 		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap[inode] = false;	
 	}
@@ -150,21 +153,17 @@ namespace TP3
 		if (emptyBlock == -1 || emptyINode == -1) return 0;
 
 		//Actualiser le bitmap
-		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap.at(emptyINode) = false;
 		std::cout << "UFS: Saisie i-node " << emptyINode << std::endl;
-		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap.at(emptyBlock) = false;
 		std::cout << "UFS: Saisie bloc " << emptyBlock << std::endl;
-
+		
+		create_empty_repo(emptyINode, emptyBlock)
+			
 		//Modifier donnees de l'inode
 		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_inode->st_block = emptyBlock;
 		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_inode->st_nlink = 2;
 		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_inode->st_mode = S_IFDIR;
 		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_inode->st_size = 56;
 
-		//Creer le bloc de donnees contenant le vecteur de dirEntries
-		Block newBlock = Block(S_IFDE);
-		newBlock.m_dirEntry.push_back(new dirEntry(emptyINode, "."));
-		newBlock.m_dirEntry.push_back(new dirEntry(iNodeParent, ".."));
 
 		//Ajouter un dirEntry aux donnees du repertoire parent
 		int blockParent = m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_block;
