@@ -99,6 +99,15 @@ namespace TP3
 		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap[24] = false;
 		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap[ROOT_INODE] = false;
 	}
+	
+	void DisqueVirtuel::create_empty_repo(int inode, int block) {
+		dirEntry currentDirEntry = dirEntry(inode, ".");
+		dirEntry parentDirEntry = dirEntry(inode, "..");
+		m_blockDisque.at(block).m_dirEntry.push_back(new dirEntry(ROOT_INODE, "."));
+		m_blockDisque.at(block).m_dirEntry.push_back(new dirEntry(ROOT_INODE, ".."));
+		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap[block] = false;
+		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap[inode] = false;	
+	}
 
 	std::string DisqueVirtuel::bd_ls(const std::string& p_DirLocation) {
 		std::vector<std::string> a = getPathDecompose(p_DirLocation);
