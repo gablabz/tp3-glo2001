@@ -100,14 +100,14 @@ namespace TP3
 		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap[ROOT_INODE] = false;
 	}
 	
-	void DisqueVirtuel::create_empty_repo(int inode, int block) {
-		m_blockDisque.at(emptyBlock).m_type_donnees = S_IFDE;
-		for (dirEntry *entry : m_blockDisque.at(emptyBlock).m_dirEntry) {
+	void DisqueVirtuel::create_empty_repo(int inode, int block, int iNodeParent) {
+		m_blockDisque.at(block).m_type_donnees = S_IFDE;
+		for (dirEntry *entry : m_blockDisque.at(block).m_dirEntry) {
 			delete entry;
 		}
-		m_blockDisque.at(emptyBlock).m_dirEntry.clear();
-		m_blockDisque.at(emptyBlock).m_dirEntry.push_back(new dirEntry(emptyINode, "."));
-		m_blockDisque.at(emptyBlock).m_dirEntry.push_back(new dirEntry(iNodeParent, ".."));
+		m_blockDisque.at(block).m_dirEntry.clear();
+		m_blockDisque.at(block).m_dirEntry.push_back(new dirEntry(inode, "."));
+		m_blockDisque.at(block).m_dirEntry.push_back(new dirEntry(iNodeParent, ".."));
 		m_blockDisque.at(FREE_BLOCK_BITMAP).m_bitmap[block] = false;
 		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap[inode] = false;	
 	}
@@ -144,8 +144,8 @@ namespace TP3
 		if (iNodeParent == -1 || m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_mode != S_IFDIR) return 0;
 		
 		//Verifier duplication
-		//int iNodeFile = findINode(newDirName);
-		//if (iNodeFile != -1) return 0;
+		int iNodeFile = findINode(newDirName);
+		if (iNodeFile != -1) return 0;
 
 		//prendre un inode et un bloc vide pour notre nouveau repertoire
 		int emptyINode = findFirstEmptyINodesIndex(m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap);
@@ -156,7 +156,7 @@ namespace TP3
 		std::cout << "UFS: Saisie i-node " << emptyINode << std::endl;
 		std::cout << "UFS: Saisie bloc " << emptyBlock << std::endl;
 		
-		create_empty_repo(emptyINode, emptyBlock)
+		create_empty_repo(emptyINode, emptyBlock, iNodeParent);
 			
 		//Modifier donnees de l'inode
 		m_blockDisque.at(BASE_BLOCK_INODE + emptyINode).m_inode->st_block = emptyBlock;
