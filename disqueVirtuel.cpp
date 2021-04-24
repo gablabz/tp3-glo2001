@@ -285,12 +285,12 @@ namespace TP3
 		
 		// modifie le size des precedents inodes
 		while(pathVector != ""){
-			int iNodeToUpdate = findINode(pathVector);
+			int iNodesToUpdate = findINode(pathVector);
 			m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_size -= 24;
 			pathVector.pop_back();
 		}
 		int iNodeToUpdate = findINode(pathVector);
-		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_size -= 24
+		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_size -= 24;
  
 		//Libere l<inode et le block dans les bitmaps
 		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap.at(iNodeToDelete) = true;
