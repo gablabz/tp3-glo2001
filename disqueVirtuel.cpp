@@ -243,7 +243,6 @@ namespace TP3
 
 		return 1;
 	}
-	}
 
 	int DisqueVirtuel::bd_rm(const std::string& p_Filename) {
 		//verifie le path
