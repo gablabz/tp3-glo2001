@@ -186,8 +186,12 @@ namespace TP3
 		
 		//Augmenter taille du repertoire parent et nb de links
 		m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_nlink++;
-		m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_size += 28;
-
+		while (iNodeParent != ROOT_INODE) {
+			m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_size += 28;
+			parentName.pop_back();
+			iNodeParent = findINode(parentName);
+		}
+		m_blockDisque.at(BASE_BLOCK_INODE + ROOT_INODE).m_inode->st_size += 28;
 		return 1;
 	}
 
@@ -229,10 +233,16 @@ namespace TP3
 		int blockParent = m_blockDisque.at(BASE_BLOCK_INODE+iNodeParent).m_inode->st_block;
 		m_blockDisque.at(blockParent).m_dirEntry.push_back(new dirEntry(emptyINode, fileName.back()));
 		
-		//Augmenter taille du repertoire parent
-		m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_size += 28;
+		//Augmenter taille des repertoires parents
+		while (iNodeParent != ROOT_INODE) {
+			m_blockDisque.at(BASE_BLOCK_INODE + iNodeParent).m_inode->st_size += 28;
+			parentName.pop_back();
+			iNodeParent = findINode(parentName);
+		}
+		m_blockDisque.at(BASE_BLOCK_INODE + ROOT_INODE).m_inode->st_size += 28;
 
 		return 1;
+	}
 	}
 
 	int DisqueVirtuel::bd_rm(const std::string& p_Filename) {
