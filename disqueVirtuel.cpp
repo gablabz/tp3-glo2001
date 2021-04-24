@@ -284,7 +284,7 @@ namespace TP3
 		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_size -= 28;
 		
 		// modifie le size des precedents inodes
-		while(pathVector != ""){
+		while(pathVector.size() != 0){
 			int iNodeToUpdate_parent = findINode(pathVector);
 			m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate_parent).m_inode->st_size -= 24;
 			pathVector.pop_back();
