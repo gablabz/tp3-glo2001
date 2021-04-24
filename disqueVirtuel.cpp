@@ -262,7 +262,7 @@ namespace TP3
 		int iNodeToUpdate = findINode(pathVector);
 		int blockToUpdate = m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_block;
 
-		//Decremente le st_nlink de l<inode precedent
+		//Decremente le st_nlink de l<inode precedent et update le st_size
 		int iNodeToUpdate_st_nlink = m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_nlink;
                 m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_nlink = iNodeToUpdate_st_nlink -1;
 		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_size = (iNodeToUpdate_st_nlink -1) * 28;
