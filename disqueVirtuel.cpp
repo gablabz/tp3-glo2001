@@ -274,6 +274,7 @@ namespace TP3
 		//Decremente le st_nlink de l<inode precedent
 		int iNodeToUpdate_st_nlink = m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_nlink;
                 m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_nlink = iNodeToUpdate_st_nlink -1;
+		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_size = iNodeToUpdate_st_nlink * 28;
 
                 //retirer le dir entry de l'inode precedent
 		//std::vector<dirEntry*> dirEntry = m_blockDisque.at(blockToUpdate).m_dirEntry;
@@ -292,15 +293,7 @@ namespace TP3
 		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_block = 0;
 		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_size -= 28;
 		
-		// modifie le size des precedents inodes
-		while(pathVector.size() != 0){
-			int iNodeToUpdate_parent = findINode(pathVector);
-			m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate_parent).m_inode->st_size -= 28;
-			pathVector.pop_back();
-		}
-		int iNodeToUpdate_root = findINode(pathVector);
-		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate_root).m_inode->st_size -= 28;
- 
+		
 		//Libere l<inode et le block dans les bitmaps
 		m_blockDisque.at(FREE_INODE_BITMAP).m_bitmap.at(iNodeToDelete) = true;
 		
