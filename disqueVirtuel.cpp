@@ -286,8 +286,8 @@ namespace TP3
 		// modifie le size des precedents inodes
 		while(pathVector != ""){
 			int iNodeToUpdate = findINode(pathVector);
-			m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_size -= 24
-			pathVector.pop_back()
+			m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_size -= 24;
+			pathVector.pop_back();
 		}
 		int iNodeToUpdate = findINode(pathVector);
 		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_size -= 24
