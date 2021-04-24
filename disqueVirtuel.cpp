@@ -265,7 +265,7 @@ namespace TP3
 		//Decremente le st_nlink de l<inode precedent
 		int iNodeToUpdate_st_nlink = m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_nlink;
                 m_blockDisque.at(BASE_BLOCK_INODE+iNodeToUpdate).m_inode->st_nlink = iNodeToUpdate_st_nlink -1;
-		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_size = iNodeToUpdate_st_nlink * 28;
+		m_blockDisque.at(BASE_BLOCK_INODE+iNodeToDelete).m_inode->st_size = (iNodeToUpdate_st_nlink -1) * 28;
 
                 //retirer le dir entry de l'inode precedent
 		//std::vector<dirEntry*> dirEntry = m_blockDisque.at(blockToUpdate).m_dirEntry;
